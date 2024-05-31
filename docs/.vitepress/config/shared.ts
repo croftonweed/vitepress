@@ -1,64 +1,43 @@
 import { defineConfig } from 'vitepress'
-import { search as zhSearch } from './zh'
+import {projectUrl, editLinkPattern} from './common'
 
+export const commitRef = process.env.COMMIT_REF ?
+    `<a href="${projectUrl}/commit/${process.env.COMMIT_REF}">` + process.env.COMMIT_REF.slice(0, 8) + '</a>':
+    'dev'
 
-export const shared = defineConfig({
-  title: 'VitePress',
+function thisYear() {
+    return new Date().getFullYear()
+}
 
-  lastUpdated: true,
-  cleanUrls: true,
-  metaChunk: true,
+export const sharedConfig = defineConfig({
+    title: 'Nginx UI',
+    description: 'Yet another Nginx Web UI',
 
-  markdown: {
-    math: true,
-    codeTransformers: [
-      // We use `[!!code` in demo to prevent transformation, here we revert it back.
-      {
-        postprocess(code) {
-          return code.replace(/\[\!\!code/g, '[!code')
-        }
-      }
-    ]
-  },
-
-  sitemap: {
-    hostname: 'https://vitepress.dev',
-    transformItems(items) {
-      return items.filter((item) => !item.url.includes('migration'))
-    }
-  },
-
-  /* prettier-ignore */
-  head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }],
-    ['link', { rel: 'icon', type: 'image/png', href: '/vitepress-logo-mini.png' }],
-    ['meta', { name: 'theme-color', content: '#5f67ee' }],
-    ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:locale', content: 'en' }],
-    ['meta', { property: 'og:title', content: 'VitePress | Vite & Vue Powered Static Site Generator' }],
-    ['meta', { property: 'og:site_name', content: 'VitePress' }],
-    ['meta', { property: 'og:image', content: 'https://vitepress.dev/vitepress-og.jpg' }],
-    ['meta', { property: 'og:url', content: 'https://vitepress.dev/' }],
-    ['script', { src: 'https://cdn.usefathom.com/script.js', 'data-site': 'AZBRSFGG', 'data-spa': 'auto', defer: '' }]
-  ],
-
-  themeConfig: {
-    logo: { src: '/vitepress-logo-mini.svg', width: 24, height: 24 },
-
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+    head: [
+        ['link', { rel: 'icon', type: 'image/svg+xml', href: '/assets/logo.svg' }],
+        ['meta', { name: 'theme-color', content: '#3682D8' }]
     ],
 
-    search: {
-      provider: 'algolia',
-      options: {
-        appId: '8J64VVRP8K',
-        apiKey: 'a18e2f4cc5665f6602c5631fd868adfd',
-        indexName: 'vitepress',
-        locales: { ...zhSearch }
-      }
-    },
+    lastUpdated: true,
 
-    carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
-  }
+    themeConfig: {
+        logo: '/assets/logo.svg',
+
+        search: {
+            provider: 'local'
+        },
+
+        editLink: {
+            pattern: editLinkPattern
+        },
+
+        footer: {
+            message: `Released under the AGPL-3.0 License. (${commitRef})`,
+            copyright: 'Copyright © 2021-' + thisYear() + ' Holyapp Team'
+        },
+
+        socialLinks: [
+            {icon: 'github', link: projectUrl}
+        ]
+    }
 })
